@@ -5,7 +5,7 @@ description: Use when working with the Steady command-line tool (the `steady` bi
 
 # Steady CLI
 
-The `steady` binary reads and writes Steady data from the terminal. Use it when the user wants to *run commands*; for writing code against the API use the `steady-api` skill, and for Claude reading/writing data itself use the Steady MCP server (`https://runsteady.com/docs/article/143-mcp-server/`).
+The `steady` binary reads and writes Steady data from the terminal. Use it when the user wants to *run commands*; for writing code against the API use the `steady-api` skill, and for Claude reading/writing data itself use the Steady MCP server (`https://runsteady.com/mcp`).
 
 Every command prints JSON to stdout (pipe to `jq`). Commands mirror the Steady v2 API resources. `steady version` / `steady upgrade` manage the binary.
 

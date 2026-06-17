@@ -174,4 +174,4 @@ When the user asks "where's the documentation for X," prefer these direct links:
 
 ## A note on the MCP server
 
-Steady also publishes an MCP server (described at `https://runsteady.com/docs/article/143-mcp-server/`) that exposes the same data through tool calls. If the user wants Claude itself to read/write Steady data — as opposed to writing a script that does — the MCP server is usually the better path. This skill is for the "write code that calls the API" use case.
+Steady also publishes an MCP server (described at `https://runsteady.com/mcp`) that exposes the same data through tool calls. If the user wants Claude itself to read/write Steady data — as opposed to writing a script that does — the MCP server is usually the better path. This skill is for the "write code that calls the API" use case.

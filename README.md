@@ -12,7 +12,7 @@ Each skill is a self-contained folder with a `SKILL.md` written to the [Agent Sk
 | [`steady-cli`](skills/steady-cli/SKILL.md) | Drive Steady from the terminal with the `steady` binary — install, OAuth + `STEADY_TOKEN` for CI, discovering commands, JSON/`jq` output, filters, and create/update input. | You want to read or update check-ins, goals, activities, etc. from a shell. |
 | [`steady-updates`](skills/steady-updates/SKILL.md) | Write clear, useful check-ins and goal updates — adding context beyond captured activity, right length, unambiguous people references, scannable formatting. This is the *what to write* skill; the API/CLI skills cover *how to submit*. | You're drafting or polishing a check-in or goal update (as a person, or as an agent reporting progress). |
 
-> **Note on the [Steady MCP server](https://runsteady.com/docs/article/143-mcp-server/):** it lets an assistant read and write Steady directly as tool calls in a conversation — no API or CLI code involved. It's the easiest *transport* for that case, and pairs naturally with `steady-updates` (which covers *what* to write). Use `steady-api` / `steady-cli` when you'd rather move the data through code, a script, or a shell.
+> **Note on the [Steady MCP server](https://runsteady.com/mcp):** it lets an assistant read and write Steady directly as tool calls in a conversation — no API or CLI code involved. It's the easiest *transport* for that case, and pairs naturally with `steady-updates` (which covers *what* to write). Use `steady-api` / `steady-cli` when you'd rather move the data through code, a script, or a shell.
 
 ## Install
 
