@@ -1,0 +1,24 @@
+{
+  "name": "steady-skills",
+  "owner": {
+    "name": "Steady",
+    "url": "https://runsteady.com"
+  },
+  "metadata": {
+    "description": "Marketplace hosting the Steady skills plugin."
+  },
+  "plugins": [
+    {
+      "name": "steady-skills",
+      "description": "Skills for working with Steady (runsteady.com) from AI-powered tools — write code against the Steady v2 API, drive the steady CLI, and compose clear check-ins and goal updates.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Steady",
+        "url": "https://runsteady.com"
+      },
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/steadyspacecorp/steady-skills"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "steady-skills",
+  "version": "1.0.0",
+  "description": "Skills for working with Steady (runsteady.com) from AI-powered tools — write code against the Steady v2 API, drive the steady CLI, and compose clear check-ins and goal updates.",
+  "author": {
+    "name": "Steady",
+    "email": "hello@runsteady.com",
+    "url": "https://runsteady.com"
+  },
+  "homepage": "https://github.com/steadyspacecorp/steady-skills",
+  "repository": "https://github.com/steadyspacecorp/steady-skills",
+  "license": "MIT",
+  "keywords": ["steady", "check-ins", "goals", "standup", "api", "cli", "updates"]
+}

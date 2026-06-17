@@ -8,35 +8,42 @@ Each skill is a self-contained folder with a `SKILL.md` written to the [Agent Sk
 
 | Skill | What it does | Use it when |
 |-------|--------------|-------------|
-| [`steady-api`](steady-api/SKILL.md) | Write correct, well-behaved code against Steady's v2 REST API — auth with `steady_pat_` tokens, the OpenAPI spec as source of truth, rate-limit handling, and the shapes for common tasks (check-ins, goal updates, activity, people). | You're writing scripts, clients, or integrations that hit `service.steady.space/api/v2`. |
-| [`steady-cli`](steady-cli/SKILL.md) | Drive Steady from the terminal with the `steady` binary — install, OAuth + `STEADY_TOKEN` for CI, discovering commands, JSON/`jq` output, filters, and create/update input. | You want to read or update check-ins, goals, activities, etc. from a shell. |
-| [`steady-updates`](steady-updates/SKILL.md) | Write clear, useful check-ins and goal updates — adding context beyond captured activity, right length, unambiguous people references, scannable formatting. This is the *what to write* skill; the API/CLI skills cover *how to submit*. | You're drafting or polishing a check-in or goal update (as a person, or as an agent reporting progress). |
+| [`steady-api`](skills/steady-api/SKILL.md) | Write correct, well-behaved code against Steady's v2 REST API — auth with `steady_pat_` tokens, the OpenAPI spec as source of truth, rate-limit handling, and the shapes for common tasks (check-ins, goal updates, activity, people). | You're writing scripts, clients, or integrations that hit `service.steady.space/api/v2`. |
+| [`steady-cli`](skills/steady-cli/SKILL.md) | Drive Steady from the terminal with the `steady` binary — install, OAuth + `STEADY_TOKEN` for CI, discovering commands, JSON/`jq` output, filters, and create/update input. | You want to read or update check-ins, goals, activities, etc. from a shell. |
+| [`steady-updates`](skills/steady-updates/SKILL.md) | Write clear, useful check-ins and goal updates — adding context beyond captured activity, right length, unambiguous people references, scannable formatting. This is the *what to write* skill; the API/CLI skills cover *how to submit*. | You're drafting or polishing a check-in or goal update (as a person, or as an agent reporting progress). |
 
 > **Note on the [Steady MCP server](https://runsteady.com/docs/article/143-mcp-server/):** it lets an assistant read and write Steady directly as tool calls in a conversation — no API or CLI code involved. It's the easiest *transport* for that case, and pairs naturally with `steady-updates` (which covers *what* to write). Use `steady-api` / `steady-cli` when you'd rather move the data through code, a script, or a shell.
 
 ## Install
 
-The same skill folders work across every tool below — only the install location (or upload step) differs. Clone this repo first:
-
-```sh
-git clone https://github.com/steadyspacecorp/steady-skills.git
-```
+The same skill folders (under [`skills/`](skills/)) work across every tool below. The fastest paths are one command each; manual copy/upload still works where there's no CLI.
 
 ### Claude Code
 
-Copy the skill folders into your personal or project skills directory, then restart Claude Code so it picks up the new directory:
+Add this repo as a plugin marketplace, then install the bundled `steady-skills` plugin (all three skills):
 
-```sh
-# Personal (available in all your projects)
-cp -R steady-skills/steady-* ~/.claude/skills/
-
-# — or — Project (commit alongside the repo it belongs to)
-cp -R steady-skills/steady-* .claude/skills/
+```
+/plugin marketplace add steadyspacecorp/steady-skills
+/plugin install steady-skills
 ```
 
-Each skill lands at `~/.claude/skills/<name>/SKILL.md`. Claude loads them when relevant, or invoke one directly with `/steady-api`, `/steady-cli`, `/steady-updates`.
+Claude loads each skill when relevant, or invoke one directly with `/steady-api`, `/steady-cli`, `/steady-updates`. Update later with `/plugin update steady-skills`.
 
 → Full reference: [Extend Claude with skills](https://code.claude.com/docs/en/skills)
+
+### Agent Skills hosts (Codex, Cursor, Copilot, Gemini CLI, Zed, …)
+
+Any host that reads the open [Agent Skills](https://agentskills.io) format can install with the [`skills`](https://github.com/vercel-labs/skills) CLI — it discovers all three skills under `skills/` and writes them to the right place for your agent:
+
+```sh
+# Personal (all repos) — drop -g for project-local (./<agent>/skills/)
+npx skills add steadyspacecorp/steady-skills -g
+
+# — or — install a single skill by name
+npx skills add steadyspacecorp/steady-skills/steady-api -g
+```
+
+→ Full reference: [Agent Skills — Codex](https://developers.openai.com/codex/skills)
 
 ### Claude apps (web & desktop)
 
@@ -44,21 +51,19 @@ The apps install skills by **upload**, not the filesystem. First enable **Code E
 
 → Step-by-step: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
-### OpenAI Codex (CLI, IDE, app)
+### Manual copy
 
-Codex reads the **same `SKILL.md` format** — it just discovers skills under `.agents/skills` rather than `.claude/skills`:
+Prefer the filesystem? Clone and copy the folders into any agent's skills directory:
 
 ```sh
-# Personal (all repos)
-cp -R steady-skills/steady-* ~/.agents/skills/
+git clone https://github.com/steadyspacecorp/steady-skills.git
 
-# — or — Repository (checked in for the team)
-cp -R steady-skills/steady-* .agents/skills/
+# Claude Code — personal or project
+cp -R steady-skills/skills/steady-* ~/.claude/skills/
+
+# Codex and other .agents hosts
+cp -R steady-skills/skills/steady-* ~/.agents/skills/
 ```
-
-Invoke explicitly with `/skills` or by mentioning a skill with `$`, or let Codex select one implicitly from its description.
-
-→ Full reference: [Agent Skills — Codex](https://developers.openai.com/codex/skills)
 
 ### ChatGPT (consumer app)
 
