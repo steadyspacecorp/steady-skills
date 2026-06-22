@@ -11,7 +11,7 @@
     {
       "name": "steady-skills",
       "description": "Skills for working with Steady (runsteady.com) from AI-powered tools — pull your current work context before related tasks, write code against the Steady v2 API, drive the steady CLI, and compose clear check-ins and goal updates.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": {
         "name": "Steady",
         "url": "https://runsteady.com"
