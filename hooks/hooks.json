@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Steady context gate: if a message starts substantive work for the user (their job - coding, planning, work writing or review, prioritizing), invoke the steady-context skill BEFORE doing the work, unless the user says to skip or context was already pulled this session. Reasons like it is just code, it is a refactor, or context will not change this are NOT valid reasons to skip.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
