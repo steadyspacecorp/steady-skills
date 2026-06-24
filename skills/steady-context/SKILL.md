@@ -1,33 +1,46 @@
 ---
 name: steady-context
-description: Pull the user’s current Steady (MCP) work context — live work memory — to inform the approach and flag alignment with current goals. DEFAULT TO PULLING before any substantive work on the user’s job or product — coding on their codebase, planning, writing or reviewing work content, or prioritizing. At the start of such a task, USE this skill unless you can state in one line why the task is genuinely trivial, one-off, or unrelated to the user’s job. “It’s just code”, “it’s a refactor”, and “context won’t change this” are NOT valid reasons to skip. Also skip follow-ups where context was already pulled this session. User override — if the user signals to skip (e.g. “skip steady”, “no steady context”, “skip context”), do NOT pull — honor it even when the task is in scope.
+description: Pull the user's current Steady (MCP) work context to inform the approach and flag goal alignment. DEFAULT TO PULLING before substantive work on the user's job or product (coding, planning, writing/reviewing work content, prioritizing). Skip only if you can say in one line why the task is trivial, one-off, or unrelated — "it's just code", "it's a refactor", and "context won't change this" do NOT count. Skip follow-ups where context was already pulled this session. If the user signals to skip (e.g. "skip steady", "skip context"), honor it even when in scope.
 ---
 
 # Pull Steady context
 
-Do this entirely **in this thread** — making the calls AND reading/summarizing what comes back. Never spawn a subagent for any part of it; that adds a slow round-trip and is what we're avoiding.
+Pull the user's current Steady work context and distill it to what bears on the task.
 
-`get_goals` depends on `get_me` (you need the person ID to scope goals to the user), so run two waves rather than one batch:
+**Run it in a subagent** that makes all calls below and returns ONLY the distilled summary (see "Return"). Give it: the user's task in a sentence, today's date, and these instructions. If your environment lets you pick the subagent's model, prefer a fast, lightweight one — this is mostly mechanical (scoped calls, short summary) and needs no heavy reasoning.
 
-**Wave 1 — `get_me` first.** It's small and fast, and returns the `people`/`team` IDs the next calls need.
+## What the subagent does
 
-1. `get_me` — the authenticated user.
+Ensure the Steady MCP tools are loaded (lazy environments: load the `Steady` tools first), then pull in **waves** — calls within a wave run in parallel.
 
-**Wave 2 — after `get_me` returns, fire these two in parallel** (don't wait on the digest before starting goals):
+Windows capture each artifact's _latest_ instance: **~7 days** for fast/bulky ones (check-ins, activities, echo answers — newest-first, so a short reach suffices); **~30 days** for slow goals, to span the update cadence.
 
-2. `get_goals` — pass the user's person ID as `people_ids` so you get the goals they're actually involved in, not every active goal.
-3. `get_digest` — recent activity across the user's teams; highest-signal summary. There's no recency limit, only a `category` filter — when the task is narrow (e.g. goal-focused), pass the matching `category` (`goals`, `check-ins`, etc.) to cut volume; otherwise read the full digest inline (no subagent).
+**Wave 1 — `get_me`.** Returns the `person_id` and `team_ids` the rest need.
 
-If the task warrants it, pull more (e.g. `get_check_ins`, `get_activities`).
+**Wave 2 (parallel), scoped with Wave 1 IDs:**
 
-Then, before doing the work, give a **concise** summary that does two things:
+- `get_goals(people_ids: [me], team_ids: [...])` — goals the user owns, has a role on, or that a team of theirs is on.
+- `get_check_ins(team_ids: [...], date_start: ~7d)` — recent intentions and blockers. Intentions are PLANS, not progress — never report them as done.
+- `get_activities(team_ids: [...], date_start: ~7d)` — recent team activity; pass `kinds` if the task points to specific ones.
+- `get_echo_questions` — index of the user's Echoes (titles, schedule, IDs); no answer bodies.
 
-1. **Informs** — surface the context that actually bears on this task: relevant goals, recent decisions or plans, people, deadlines, or anything that should shape the approach. This is the memory part — pull forward what's useful, not just what's misaligned.
-2. **Signals alignment** — open with a green/yellow/red read:
-   - 🟢 **Green** — well aligned with current goals and stated plans. Say so plainly.
-   - 🟡 **Yellow** — mostly aligned, but a priority, timing, or scope nuance is worth weighing.
-   - 🔴 **Red** — conflicts with current goals/priorities, or something in the context should change the approach.
+**Wave 3 (parallel, dependent):**
 
-Keep it short and specific to what actually matters for this task.
+- `get_goal_updates(goal_ids: [Wave 2 goals], date_start: ~30d)` — recent updates, whoever wrote them.
+- `get_echo_answers(question_id, date_start: ~7d)` for each Echo that bears on the task. A purpose-built Echo (e.g. "coding agent context") is high-signal; "personal insights"/"just for fun" are noise. Daily/weekly answers land inside ~7 days; a monthly one may not surface — fine for current context.
 
-Pull **once per task**. Don't re-pull on every message in the same thread.
+Scale to the task — a goal-focused one may need only goals + updates + the one relevant Echo. Pull more if warranted (`get_people`, `get_insights`, `get_absences`).
+
+## Return
+
+Return a **concise** summary that:
+
+1. **Informs** — the context that bears on the task: relevant goals, recent decisions/plans, people, deadlines, relevant Echo content. Pull forward what's useful, not just what's misaligned.
+2. **Signals alignment** — open with a 🟢/🟡/🔴 read:
+   - 🟢 **Green** — well aligned with current goals and plans.
+   - 🟡 **Yellow** — mostly aligned, but a priority/timing/scope nuance is worth weighing.
+   - 🔴 **Red** — conflicts with goals/priorities, or something should change the approach.
+
+Keep it short and specific. Then proceed, informed by it.
+
+Pull **once per task** — don't re-pull each message. If later work needs an omitted detail, query the same subagent again rather than re-pulling everything.

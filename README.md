@@ -8,11 +8,12 @@ Each skill is a self-contained folder with a `SKILL.md` written to the [Agent Sk
 
 | Skill | What it does | Use it when |
 |-------|--------------|-------------|
+| [`steady-context`](skills/steady-context/SKILL.md) | Automatically pulls your current Steady work context before related work — what's relevant to the task, plus an alignment check against your current goals. Reads through the Steady MCP server. | You're starting agent-driven work and want it to be informed and aligned. |
 | [`steady-api`](skills/steady-api/SKILL.md) | Write correct, well-behaved code against Steady's v2 REST API — auth with `steady_pat_` tokens, the OpenAPI spec as source of truth, rate-limit handling, and the shapes for common tasks (check-ins, goal updates, activity, people). | You're writing scripts, clients, or integrations that hit `service.steady.space/api/v2`. |
 | [`steady-cli`](skills/steady-cli/SKILL.md) | Drive Steady from the terminal with the `steady` binary — install, OAuth + `STEADY_TOKEN` for CI, discovering commands, JSON/`jq` output, filters, and create/update input. | You want to read or update check-ins, goals, activities, etc. from a shell. |
 | [`steady-updates`](skills/steady-updates/SKILL.md) | Write clear, useful check-ins and goal updates — adding context beyond captured activity, right length, unambiguous people references, scannable formatting. This is the *what to write* skill; the API/CLI skills cover *how to submit*. | You're drafting or polishing a check-in or goal update (as a person, or as an agent reporting progress). |
 
-> **Note on the [Steady MCP server](https://runsteady.com/mcp):** it lets an assistant read and write Steady directly as tool calls in a conversation — no API or CLI code involved. It's the easiest *transport* for that case, and pairs naturally with `steady-updates` (which covers *what* to write). Use `steady-api` / `steady-cli` when you'd rather move the data through code, a script, or a shell.
+> **Note on the [Steady MCP server](https://runsteady.com/mcp):** it lets an assistant read and write Steady directly as tool calls in a conversation — no API or CLI code involved. It's the easiest *transport* for that case: `steady-context` reads your work context through it, and it pairs naturally with `steady-updates` (which covers *what* to write). Use `steady-api` / `steady-cli` when you'd rather move the data through code, a script, or a shell.
 
 ## Install
 
@@ -20,20 +21,20 @@ The same skill folders (under [`skills/`](skills/)) work across every tool below
 
 ### Claude Code
 
-Add this repo as a plugin marketplace, then install the bundled `steady-skills` plugin (all three skills):
+Add this repo as a plugin marketplace, then install the bundled `steady-skills` plugin (all four skills):
 
 ```
 /plugin marketplace add steadyspacecorp/steady-skills
 /plugin install steady-skills
 ```
 
-Claude loads each skill when relevant, or invoke one directly with `/steady-api`, `/steady-cli`, `/steady-updates`. Update later with `/plugin update steady-skills`.
+Claude loads each skill when relevant, or invoke one directly with `/steady-context`, `/steady-api`, `/steady-cli`, `/steady-updates`. Update later with `/plugin update steady-skills`.
 
 → Full reference: [Extend Claude with skills](https://code.claude.com/docs/en/skills)
 
 ### Agent Skills hosts (Codex, Cursor, Copilot, Gemini CLI, Zed, …)
 
-Any host that reads the open [Agent Skills](https://agentskills.io) format can install with the [`skills`](https://github.com/vercel-labs/skills) CLI — it discovers all three skills under `skills/` and writes them to the right place for your agent:
+Any host that reads the open [Agent Skills](https://agentskills.io) format can install with the [`skills`](https://github.com/vercel-labs/skills) CLI — it discovers all four skills under `skills/` and writes them to the right place for your agent:
 
 ```sh
 # Personal (all repos) — drop -g for project-local (./<agent>/skills/)
